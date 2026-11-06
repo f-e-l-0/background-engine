@@ -1,0 +1,49 @@
+spring:
+  application:
+    name: background-engine
+  threads:
+    virtual:
+      enabled: true
+  lifecycle:
+    timeout-per-shutdown-phase: 30s
+
+  datasource:
+    url: ${DB_URL:jdbc:postgresql://localhost:5432/background-engine}
+    username: ${DB_USER:postgres}
+    password: ${DB_PASSWORD:Felix?2030}
+
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: validate
+  data:
+    redis:
+      host: ${REDIS_HOST:localhost}
+      port: 6379
+  rabbitmq:
+    host: ${RABBIT_HOST:localhost}
+    username: ${RABBIT_USER:guest}
+    password: ${RABBIT_PASSWORD:Felix?2026}
+
+server:
+  port: 8080
+  shutdown: graceful
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,prometheus
+  endpoint:
+    health:
+      probes:
+        enabled: true
+
+engine:
+  retry-tiers: 1s,5s,30s,2m,10m
+  idempotency-claim-ttl: 10m
+  idempotency-done-ttl: 24h
+  task-lease: 5m
+  concurrency: 4
+  max-concurrency: 16
+  prefetch: 10
